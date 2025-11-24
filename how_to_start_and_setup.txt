@@ -1,0 +1,90 @@
+Run docker compose up -d. Wait 30 seconds for Keycloak to start.
+
+Part A: Configure Keycloak
+Go to http://localhost:8080/admin/ and login with admin / admin.
+
+Create Realm: Click the dropdown "Keycloak" (top left) -> Create Realm -> Name it myrealm.
+
+Create Client:
+
+Go to Clients -> Create Client.
+
+Client ID: streamlit-client.
+
+Next -> turn Client authentication to ON.
+
+Next -> Valid Redirect URIs: http://localhost/oauth2/callback.
+
+Save.
+
+Get Secret: Click the Credentials tab. Copy the Client Secret.
+
+Paste this into your .env file and restart docker (docker compose restart oauth2-proxy).
+
+Create a Test User: Go to Users -> Add user -> Username: testuser. Save. Go to Credentials tab -> Set password.
+
+Part B: Add Google / Facebook Login
+In Keycloak: Go to Identity Providers (left menu) -> Click Google or Facebook.
+
+Copy the Redirect URI: Keycloak will show you a URL like http://localhost:8080/realms/myrealm/broker/google/endpoint. Copy this.
+
+For Google:
+
+Go to Google Cloud Console.
+
+Create a project -> APIs & Services -> Credentials.
+
+Create Credentials -> OAuth Client ID -> Web Application.
+
+Authorized Redirect URIs: Paste the link you copied from Keycloak.
+
+Copy the Client ID and Client Secret Google gives you.
+
+Paste them back into the Keycloak Google Provider settings.
+
+For Facebook:
+
+Go to Meta for Developers.
+
+My Apps -> Create App -> "Authenticate and request data...".
+
+Add Facebook Login product.
+
+In Settings -> Valid OAuth Redirect URIs, paste the link from Keycloak.
+
+Copy App ID and App Secret and paste into Keycloak.
+
+6. How to Run
+Update your .env with the secret from Keycloak.
+
+Run:
+
+Bash
+
+docker compose down
+docker compose up -d
+Visit http://localhost.
+
+You will be instantly redirected to Keycloak.
+
+You will see "Sign in with Google/Facebook" (if configured) or your standard login.
+
+Once logged in, you are bounced back to your Streamlit app.
+
+
+
+
+
+## Logs 
+docker logs json_rag_ui
+
+
+
+
+# how to run 
+docker compose up -d
+
+
+## 
+docker compose build --no-cache
+docker compose up -d

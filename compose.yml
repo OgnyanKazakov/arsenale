@@ -1,0 +1,87 @@
+services:
+  # 1. AI Backend (Updated to use custom build)
+  ollama:
+    build:
+      context: .
+      dockerfile: Dockerfile.ollama
+    container_name: ollama_backend
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_storage:/root/.ollama
+
+  # 2. Streamlit App (Internal only - no ports exposed!)
+  streamlit-app:
+    build: .
+    container_name: json_rag_ui
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      - ./data:/app/data
+
+  # 3. Keycloak Database
+  postgres:
+    image: postgres:15
+    container_name: keycloak_db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 4. Keycloak (Identity Provider)
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: keycloak
+    command: start-dev --import-realm
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_PROXY: edge # Important for running behind Nginx
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  # 5. OAuth2 Proxy (The Security Guard)
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    container_name: oauth2_proxy
+    environment:
+      # Connect to Keycloak
+      OAUTH2_PROXY_PROVIDER: keycloak-oidc
+      OAUTH2_PROXY_CLIENT_ID: streamlit-client
+      OAUTH2_PROXY_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      OAUTH2_PROXY_OIDC_ISSUER_URL: http://keycloak:8080/realms/myrealm
+      # Config
+      OAUTH2_PROXY_COOKIE_SECRET: "OQINaROhtE9sKgZiY5-o9pgX5J8QZJ75" # Change this! (python -c 'import secrets; print(secrets.token_urlsafe(32))')
+      OAUTH2_PROXY_EMAIL_DOMAINS: "*"
+      OAUTH2_PROXY_HTTP_ADDRESS: "0.0.0.0:4180"
+      OAUTH2_PROXY_UPSTREAMS: "http://streamlit-app:8501"
+      OAUTH2_PROXY_REDIRECT_URL: "http://localhost/oauth2/callback"
+      OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true"
+    depends_on:
+      - keycloak
+
+  # 6. Nginx (The Gateway)
+  nginx:
+    image: nginx:latest
+    container_name: nginx_gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - oauth2-proxy
+      - streamlit-app
+
+volumes:
+  ollama_storage:
+  postgres_data:
