@@ -1,0 +1,38 @@
+# Use an official NVIDIA CUDA base image with Ubuntu 22.04
+# This image includes the necessary drivers and runtime libraries for GPU acceleration.
+FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
+
+# Set environment variable for non-interactive installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Update package lists and install Python 3.11, pip, and essential build tools.
+# Python and pip are not included in the CUDA runtime image by default.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3.11 \
+    python3.11-distutils \
+    python3-pip \
+    build-essential \
+    libgomp1 && \
+    # Link python3.11 to the generic 'python' command
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy the requirements file and install Python dependencies
+# Use --no-cache-dir for a smaller image
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code and assets
+COPY app.py .
+COPY assets ./assets
+COPY .env .
+
+# Expose the port Streamlit runs on
+EXPOSE 8501
+
+# Run the Streamlit application using the installed Python interpreter
+ENTRYPOINT ["python", "-m", "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
