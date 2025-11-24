@@ -1,37 +1,37 @@
-/* assets/style.css - Claude Theme */
+/* assets/style.css - Claude Dark Theme */
 
-/* 1. Global Theme: Soft White Background, Crail Accent */
+/* 1. Global Theme: Deep Dark Background, Lilac Accent */
 
-/* Streamlit Theme Variables Override (Used by many native elements) */
+/* Streamlit Theme Variables Override */
 :root {
-    --primary-color: #C15F3C;      /* Claude Accent: Crail (Warm Orange/Brown) */
-    --background-color: #F4F3EE;   /* Claude Background: Pampas (Soft Off-White) */
-    --secondary-background-color: #FFFFFF; /* White for User Bubble / sidebar */
-    --text-color: #111111;         /* Dark text */
+    --primary-color: #A090D0;      /* Soft Lilac/Lavender Accent */
+    --background-color: #1A1A1A;   /* Deep Dark Gray Background */
+    --secondary-background-color: #2A2A2A; /* Slightly lighter gray for containers/sidebar */
+    --text-color: #FAFAFA;         /* Near White Text */
     --font: 'sans-serif';
 }
 
 /* Main App Container */
 .stApp {
-    background-color: #F4F3EE; /* Soft Off-White */
-    color: #111111;
+    background-color: #1A1A1A; 
+    color: #FAFAFA;
 }
 
-/* 2. Centering the Content and Input Field (Preserving previous layout) */
+/* 2. Centering the Content and Input Field */
 
 /* Streamlit's main content area wrapper */
 .main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 50px;
+    padding-top: 20px;
 }
 
-/* The element that contains the main page content, controls its width */
+/* Controls the width of the main content */
 .block-container {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
-    max-width: 800px; /* Centered width */
+    max-width: 900px;
     width: 100% !important;
 }
 
@@ -40,44 +40,43 @@ footer, header {
     visibility: hidden;
 }
 
-
 /* 3. Styling the Input Field (Centered at the bottom) */
 
 /* Targets the st.chat_input container */
 .st-emotion-cache-1c9v62e { 
-    border: 1px solid #C15F3C; /* Use Claude's accent color for the border */
+    border: 1px solid #A090D0; /* Lilac accent border */
     border-radius: 12px;
-    box-shadow: 0 0 5px rgba(193, 95, 60, 0.3); /* Soft shadow */
-    background-color: #FFFFFF !important;
+    box-shadow: 0 0 5px rgba(160, 144, 208, 0.4); /* Soft glow */
+    background-color: #2A2A2A !important;
 }
 
 /* Style for the actual text input box inside */
 [data-testid="stTextInput"] > div > div > input {
-    background-color: #FFFFFF !important;
-    color: #111111 !important;
+    background-color: #2A2A2A !important;
+    color: #FAFAFA !important;
     border: none !important;
 }
 
 /* Style for the Send button */
 [data-testid="stFormSubmitButton"] {
-    background-color: #C15F3C !important;
-    color: #FFFFFF !important;
+    background-color: #A090D0 !important;
+    color: #1A1A1A !important; /* Dark text on lilac button */
     border-radius: 8px !important;
 }
 
-/* 4. Styling Chat Messages (Claude's signature bubbles) */
+/* 4. Styling Chat Messages (Dark Mode Bubbles) */
 
-/* User Message Bubble (White Background) */
+/* User Message Bubble (Darker Gray Background) */
 [data-testid="stChatMessage"]:has(.stMarkdown > div > span:nth-child(1):contains("user")) [data-testid="stMarkdownContainer"] {
-    background-color: #FFFFFF;
+    background-color: #333333;
     border-radius: 18px 18px 0 18px;
     padding: 10px 15px;
-    border: 1px solid #DDDDDD; /* Light border */
+    border: 1px solid #444444; 
 }
 
-/* Assistant Message Bubble (Soft Gray/Pampas Background) */
+/* Assistant Message Bubble (Lighter Dark Gray Background) */
 [data-testid="stChatMessage"]:has(.stMarkdown > div > span:nth-child(1):contains("assistant")) [data-testid="stMarkdownContainer"] {
-    background-color: #EFEFF5; /* A very light, slightly cooler gray */
+    background-color: #2A2A2A; 
     border-radius: 18px 18px 18px 0;
     padding: 10px 15px;
 }
