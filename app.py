@@ -44,7 +44,7 @@ if "setup_done" not in st.session_state:
             model_name="BAAI/bge-small-en-v1.5"
         )
         Settings.llm = Ollama(
-            model="llama3", 
+            model="llama3:8b", 
             base_url=ollama_base_url,
             request_timeout=300.0
         )
