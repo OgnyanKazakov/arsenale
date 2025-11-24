@@ -23,8 +23,10 @@ def local_css(file_name):
 # --- APPLY CUSTOM CSS AND CONFIG ---
 local_css("assets/style.css") # Applies the new dark theme
 
+
 st.set_page_config(
     page_title="JSON RAG Assistant", 
+    page_icon="🧊",  # Ice cube emoji
     layout="wide", 
     # Removed initial_sidebar_state="collapsed" so the sidebar is visible by default
 )
@@ -44,7 +46,7 @@ if "setup_done" not in st.session_state:
             model_name="BAAI/bge-small-en-v1.5"
         )
         Settings.llm = Ollama(
-            model="llama3:8b", 
+            model="qwen3:4b", 
             base_url=ollama_base_url,
             request_timeout=300.0
         )
@@ -90,21 +92,46 @@ with st.sidebar:
             st.session_state[INDEX_LOADED_KEY] = True
             st.success(f"Indexed {len(documents)} files and saved to disk!")
 
-# --- 4. CENTERING CHAT INTERFACE ---
-# Use columns to create empty buffers on the left and right, centering the content
-col1, col_center, col3 = st.columns([1, 5, 1])
 
-with col_center:
-    # 4. Chat Interface Logic
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+# --- 4. CHAT INTERFACE WITH CONDITIONAL CENTERING ---
+# Initialize messages if not exists
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
+# Check if this is the first query (no messages yet)
+is_first_query = len(st.session_state.messages) == 0
+
+if is_first_query:
+    # Center the interface for the first query
+    col1, col_center, col3 = st.columns([1, 5, 1])
+    
+    with col_center:
+        # Chat Input (centered)
+        if prompt := st.chat_input("Ask a question about your JSON data..."):
+            # Add user message to history
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            with st.chat_message("user"):
+                st.markdown(prompt)
+
+            # Generate response
+            if st.session_state.get("query_engine"):
+                with st.chat_message("assistant"):
+                    with st.spinner("Thinking..."):
+                        response = st.session_state["query_engine"].query(prompt)
+                        st.markdown(response.response)
+                        
+                        # Add assistant response to history
+                        st.session_state.messages.append({"role": "assistant", "content": response.response})
+            else:
+                st.warning("Please upload and index a JSON file first (or wait for the existing index to load).")
+else:
+    # After first query: display chat history and keep input at bottom (no columns)
     # Display chat history
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # Chat Input (This is now visually centered by the columns)
+    # Chat Input (at bottom, full width)
     if prompt := st.chat_input("Ask a question about your JSON data..."):
         # Add user message to history
         st.session_state.messages.append({"role": "user", "content": prompt})
@@ -115,7 +142,6 @@ with col_center:
         if st.session_state.get("query_engine"):
             with st.chat_message("assistant"):
                 with st.spinner("Thinking..."):
-                    # Use the stored query engine
                     response = st.session_state["query_engine"].query(prompt)
                     st.markdown(response.response)
                     

@@ -10,26 +10,27 @@ services:
     volumes:
       - ollama_storage:/root/.ollama
 
-# 2. Streamlit App (Internal Only)
+  # 2. Streamlit App (Internal Only)
   streamlit-app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: json_rag_ui
-    # Ports removed! We only want Nginx to talk to this.
     depends_on:
       - ollama
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
     volumes:
       - ./data:/app/data
-      - index_volume:/app/index_storage  # <-- Map persistence directory to a named volume
+      - index_volume:/app/index_storage
 
   # 3. Nginx Reverse Proxy
   nginx:
     build: ./nginx
     container_name: nginx_proxy
     ports:
-      - "443:443"  # HTTPS
-      - "80:80"    # HTTP (Redirects to HTTPS)
+      - "443:443"
+      - "80:80"
     depends_on:
       - streamlit-app
 
