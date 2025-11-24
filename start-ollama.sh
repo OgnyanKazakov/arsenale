@@ -9,9 +9,9 @@ pid=$!
 # 2. Wait a few seconds for the server to wake up
 sleep 5
 
-# 3. Check if 'llama3' is installed. If not, pull it.
+# 3. Check if 'qwen3:4b' is installed. If not, pull it.
 echo "🔴 Checking for qwen3:4b model..."
-if ! ollama list | grep -q "llama3"; then
+if ! ollama list | grep -q "qwen3"; then
   echo "⚙️  Model not found. Pulling qwen now..."
   ollama pull qwen3:4b
   echo "✅ Model pulled successfully!"
