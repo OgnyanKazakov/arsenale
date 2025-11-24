@@ -1,0 +1,83 @@
+/* assets/style.css - Claude Theme */
+
+/* 1. Global Theme: Soft White Background, Crail Accent */
+
+/* Streamlit Theme Variables Override (Used by many native elements) */
+:root {
+    --primary-color: #C15F3C;      /* Claude Accent: Crail (Warm Orange/Brown) */
+    --background-color: #F4F3EE;   /* Claude Background: Pampas (Soft Off-White) */
+    --secondary-background-color: #FFFFFF; /* White for User Bubble / sidebar */
+    --text-color: #111111;         /* Dark text */
+    --font: 'sans-serif';
+}
+
+/* Main App Container */
+.stApp {
+    background-color: #F4F3EE; /* Soft Off-White */
+    color: #111111;
+}
+
+/* 2. Centering the Content and Input Field (Preserving previous layout) */
+
+/* Streamlit's main content area wrapper */
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50px;
+}
+
+/* The element that contains the main page content, controls its width */
+.block-container {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    max-width: 800px; /* Centered width */
+    width: 100% !important;
+}
+
+/* Hides the footer and header for a cleaner look */
+footer, header {
+    visibility: hidden;
+}
+
+
+/* 3. Styling the Input Field (Centered at the bottom) */
+
+/* Targets the st.chat_input container */
+.st-emotion-cache-1c9v62e { 
+    border: 1px solid #C15F3C; /* Use Claude's accent color for the border */
+    border-radius: 12px;
+    box-shadow: 0 0 5px rgba(193, 95, 60, 0.3); /* Soft shadow */
+    background-color: #FFFFFF !important;
+}
+
+/* Style for the actual text input box inside */
+[data-testid="stTextInput"] > div > div > input {
+    background-color: #FFFFFF !important;
+    color: #111111 !important;
+    border: none !important;
+}
+
+/* Style for the Send button */
+[data-testid="stFormSubmitButton"] {
+    background-color: #C15F3C !important;
+    color: #FFFFFF !important;
+    border-radius: 8px !important;
+}
+
+/* 4. Styling Chat Messages (Claude's signature bubbles) */
+
+/* User Message Bubble (White Background) */
+[data-testid="stChatMessage"]:has(.stMarkdown > div > span:nth-child(1):contains("user")) [data-testid="stMarkdownContainer"] {
+    background-color: #FFFFFF;
+    border-radius: 18px 18px 0 18px;
+    padding: 10px 15px;
+    border: 1px solid #DDDDDD; /* Light border */
+}
+
+/* Assistant Message Bubble (Soft Gray/Pampas Background) */
+[data-testid="stChatMessage"]:has(.stMarkdown > div > span:nth-child(1):contains("assistant")) [data-testid="stMarkdownContainer"] {
+    background-color: #EFEFF5; /* A very light, slightly cooler gray */
+    border-radius: 18px 18px 18px 0;
+    padding: 10px 15px;
+}

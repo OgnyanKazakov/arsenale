@@ -88,3 +88,8 @@ docker compose up -d
 ## 
 docker compose build --no-cache
 docker compose up -d
+
+
+# new outfit 
+# Assuming you are in the project root
+docker compose up -d --no-deps streamlit-app
