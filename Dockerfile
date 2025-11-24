@@ -25,6 +25,7 @@ RUN uv pip install --system --no-cache -r requirements.txt
 
 # 6. Copy application code
 COPY app.py .
+COPY ./assets/ ./assets/
 
 # 7. Expose Port
 EXPOSE 8501
