@@ -1,7 +1,15 @@
 import streamlit as st
 import os
 import json
-from llama_index.core import VectorStoreIndex, Settings, Document
+
+# UPDATED IMPORTS for Index Persistence
+from llama_index.core import (
+    VectorStoreIndex, 
+    Settings, 
+    Document, 
+    StorageContext, 
+    load_index_from_storage
+)
 from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.readers.json import JSONReader
@@ -21,12 +29,12 @@ def local_css(file_name):
 
 # 1. Configuration
 # --- APPLY CUSTOM CSS AND CONFIG ---
-local_css("assets/style.css") # Applies the new dark theme
+# Assuming assets/style.css is available with the Claude Dark Theme
+local_css("assets/style.css") 
 
 st.set_page_config(
     page_title="JSON RAG Assistant", 
     layout="wide", 
-    # Removed initial_sidebar_state="collapsed" so the sidebar is visible by default
 )
 
 # Replace st.title with centered Markdown headings
@@ -34,7 +42,7 @@ st.markdown("<h1 style='text-align: center;'>🤖 JSON RAG Assistant</h1>", unsa
 st.markdown("<h4 style='text-align: center; color: #9A9A9A;'>Ask about your data. Powered by Llama 3.</h4>", unsafe_allow_html=True)
 st.markdown("---")
 
-# Define where to look for Ollama
+# Define where to look for Ollama (read from environment set by docker-compose)
 ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 # 2. Setup LlamaIndex Settings (NOW INCLUDES PERSISTENCE CHECK)
