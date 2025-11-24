@@ -5,6 +5,7 @@ from llama_index.core import VectorStoreIndex, Settings, Document
 from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.readers.json import JSONReader
+from llama_index import VectorStoreIndex, SimpleDirectoryReader, StorageContext, load_index_from_storage
 
 # --- CONSTANTS & CSS INJECTION FUNCTION ---
 PERSIST_DIR = "index_storage"
